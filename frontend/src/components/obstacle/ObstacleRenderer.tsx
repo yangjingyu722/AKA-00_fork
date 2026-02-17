@@ -199,9 +199,17 @@ export const computeSprites = (
         while (spriteAngle > Math.PI) spriteAngle -= Math.PI * 2;
         while (spriteAngle < -Math.PI) spriteAngle += Math.PI * 2;
 
+        const radius = ball.r || 15;
+        const halfFov = fov / 2;
+        const edgeAngle = Math.atan2(radius, dist);
+
+        if (spriteAngle - edgeAngle > halfFov || spriteAngle + edgeAngle < -halfFov) {
+            return null;
+        }
+
         const correctedDist = Math.abs(dist * Math.cos(spriteAngle));
         const screenX = (w / 2) + (spriteAngle / fov) * w;
-        const spriteSize = (h * 40) / correctedDist * ((ball.r || 15) / 15);
+        const spriteSize = (h * 40) / correctedDist * (radius / 15);
         const wallHeight = (h * 40) / correctedDist;
         const wallBottom = h / 2 + wallHeight / 2;
         const screenY = wallBottom - spriteSize / 2;
@@ -215,7 +223,8 @@ export const computeSprites = (
             color: ball.color,
             isPicked: false
         };
-    }).sort((a, b) => b.realDist - a.realDist);
+    }).filter((sprite): sprite is SpriteData => sprite !== null)
+      .sort((a, b) => b.realDist - a.realDist);
 };
 
 export const renderFirstPersonWalls = (
