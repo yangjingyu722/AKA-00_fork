@@ -6,7 +6,8 @@ type ButtonProps = {
     onPressEnd?: () => void;
     onClick?: () => void;
     variant?: "primary" | "danger" | "success" | "secondary";
-    size?: "square" | "wide";
+    size?: "square" | "wide" | "small";
+    style?: React.CSSProperties;
 };
 
 const colorMap = {
@@ -30,11 +31,14 @@ const ControlButton = ({
                            onPressStart,
                            onPressEnd,
                            onClick,
+                           style,
                        }: ButtonProps) => {
     const [isPressed, setIsPressed] = useState(false);
     const baseSize =
         size === "square"
             ? {width: "22vw", height: "22vw", maxWidth: "110px", maxHeight: "110px"}
+            : size === "small"
+            ? {width: "15vw", height: "15vw", maxWidth: "75px", maxHeight: "75px"}
             : {width: "40vw", height: "60px", maxWidth: "200px"};
 
     const handlePressStart = () => {
@@ -58,18 +62,23 @@ const ControlButton = ({
             }}
             style={{
                 ...baseSize,
-                borderRadius: "18px",
-                border: "none",
+                borderRadius: "50%",
+                border: "2px solid rgba(255, 255, 255, 0.2)",
                 background: isPressed ? pressedColorMap[variant] : colorMap[variant],
                 color: "white",
                 fontWeight: "bold",
-                fontSize: "16px",
-                transition: "all 0.15s ease",
+                fontSize: "20px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                transition: "all 0.2s ease",
                 boxShadow: isPressed
-                    ? "0 3px 8px rgba(0,0,0,0.4)"   // 按下时阴影变浅/变小
-                    : "0 6px 15px rgba(0,0,0,0.5)",
-                transform: isPressed ? "scale(0.96)" : "scale(1)",
+                    ? "0 4px 12px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.2)"   // 按下时阴影变浅/变小
+                    : "0 8px 20px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.3)",
+                transform: isPressed ? "scale(0.95) translateY(2px)" : "scale(1) translateY(0)",
                 touchAction: "none",
+                cursor: "pointer",
+                ...style,
             }}
         >
             {children}
